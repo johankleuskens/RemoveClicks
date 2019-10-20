@@ -17,7 +17,7 @@ def load_wav_file(wav_file):
     return sig_left, sig_right
 
 def write_wav_file(wav_left, wav_right, name):
-    sig = np.concatenate((wav_left, wav_right), axis=1)
+    sig = np.column_stack((wav_left, wav_right))
     wav.write(name+'piet.wav', 48000, sig)
     
 def ProcessChannel(channel):
