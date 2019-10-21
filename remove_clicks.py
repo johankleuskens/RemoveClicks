@@ -48,17 +48,19 @@ def ProcessChannelFast(channel):
     # Create an array with indexes where processed_Channel is  < min_level
     hit_channel = np.where(processed_channel < min_channel)
     skip_index = 0
-    for x in hit_channel:
+    for index in range(len(hit_channel[0])):
         # check if this index should be skipped as it has been processed already
-        if x < skip_index:
+        if index < skip_index:
             continue
+        
+        x = hit_channel[0][index] 
         #Check the hit_channel array for consecutive index values
         count = 0
-        while hit_channel[x + count] + 1 == hit_channel[x + count + 1]:
+        while (index + count + 1 < len(hit_channel[0])) and (hit_channel[0][index + count] + 1 == hit_channel[0][index + count + 1]):
             count = count +1
-        if count > 8:
-            processed_channel[x:x+count] = processed_channel[x-1]
-            skip_index = x + count
+        if count > 10:
+            processed_channel[x:x+count+1] = processed_channel[x-1];
+            skip_index = index + count
         
         # Print progress
         progress = 100 * x/channel.size
