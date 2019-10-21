@@ -29,7 +29,7 @@ def ProcessChannel(channel):
             while processed_channel[x+count] < min_level:
                 count = count +1
             if count > 8:
-                processed_channel[x:x+count] = 0
+                processed_channel[x:x+count] = processed_channel[x-1]
         # Print progress
         progress = 100 * x/channel.size
         if int(progress) != prev_progress:
@@ -57,7 +57,7 @@ def ProcessChannelFast(channel):
         while hit_channel[x + count] + 1 == hit_channel[x + count + 1]:
             count = count +1
         if count > 8:
-            processed_channel[x:x+count] = 0
+            processed_channel[x:x+count] = processed_channel[x-1]
             skip_index = x + count
         
         # Print progress
