@@ -1,7 +1,7 @@
 '''
 Created on Oct 19, 2019
 
-@author: johan
+@author: johan kleuskens (johan@melderse.nl)
 '''
 
 import scipy.io.wavfile as wav
@@ -15,11 +15,11 @@ def load_wav_file(wav_file):
     sig_right = sig[:,1]
     return sig_left, sig_right
 
-def write_wav_file(wav_left, wav_right, name):
+def write_wav_file(wav_left, wav_right, path):
     sig = np.column_stack((wav_left, wav_right))
-    wav.write(name+'piet.wav', 48000, sig)
+    wav.write(path, 48000, sig)
     
-def ProcessChannel(channel):
+def ProcessChannelSlow(channel):
     min_level = -0.65
     prev_progress = int(0);
     processed_channel = np.copy(channel)
@@ -62,12 +62,6 @@ def ProcessChannelFast(channel):
             processed_channel[x:x+count+1] = processed_channel[x-1];
             skip_index = index + count
         
-        # Print progress
-        progress = 100 * x/channel.size
-        if int(progress) != prev_progress:
-            prev_progress = int(progress)
-            print('Progress', prev_progress)
-            
     return processed_channel
 
 def ProcessAllWavFiles(path):
@@ -81,7 +75,7 @@ def ProcessAllWavFiles(path):
         sig_left_new = ProcessChannelFast(sig_left)
         sig_right_new = ProcessChannelFast(sig_right)
         # Write result back to new file
-        write_wav_file(sig_left_new, sig_right_new, path+'/ProcessedWav/')
+        write_wav_file(sig_left_new, sig_right_new, path + '/ProcessedWav/'+wav_file)
         print("Ready", wav_file)
 
 #if __name__ == '__main__':
