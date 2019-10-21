@@ -34,7 +34,7 @@ def ProcessChannel(channel):
         progress = 100 * x/channel.size
         if int(progress) != prev_progress:
             prev_progress = int(progress)
-            print('Progress ', prev_progress)
+            print('Progress', prev_progress)
             
     return processed_channel
 
@@ -46,9 +46,9 @@ def ProcessChannelFast(channel):
     # Create an array of minimum values
     min_channel = np.ones(channel.size) * min_level
     # Create an array with indexes where processed_Channel is  < min_level
-    hit_channel = processed_channel < min_channel
+    hit_channel = np.where(processed_channel < min_channel)
     skip_index = 0
-    for x in range(hit_channel):
+    for x in hit_channel:
         # check if this index should be skipped as it has been processed already
         if x < skip_index:
             continue
@@ -64,7 +64,7 @@ def ProcessChannelFast(channel):
         progress = 100 * x/channel.size
         if int(progress) != prev_progress:
             prev_progress = int(progress)
-            print('Progress ', prev_progress)
+            print('Progress', prev_progress)
             
     return processed_channel
 
@@ -73,14 +73,14 @@ def ProcessAllWavFiles(path):
     files = os.listdir(path)
     wav_files = [file for file in files if file.endswith('.wav')]
     for wav_file in wav_files:
-        print("Loading ", wav_file)
+        print("Loading", wav_file)
         sig_left, sig_right = load_wav_file(path + wav_file)
-        print("Processing ", wav_file)
-        sig_left_new = ProcessChannel(sig_left)
-        sig_right_new = ProcessChannel(sig_right)
+        print("Processing", wav_file)
+        sig_left_new = ProcessChannelFast(sig_left)
+        sig_right_new = ProcessChannelFast(sig_right)
         # Write result back to new file
         write_wav_file(sig_left_new, sig_right_new, path+'/ProcessedWav/')
-        print("Ready ", wav_file)
+        print("Ready", wav_file)
 
 #if __name__ == '__main__':
 ProcessAllWavFiles('/mnt/hgfs/DVOmzetten/')
