@@ -4,23 +4,25 @@ Created on Oct 19, 2019
 @author: johan kleuskens (johan@melderse.nl)
 '''
 
-import scipy.io.wavfile as wav
 import os
 import numpy as np
+import soundfile as sf
 
 
 def load_wav_file(wav_file):
-    rate, sig = wav.read(wav_file)
+#    rate, sig = wav.read(wav_file)
+    sig, rate = sf.read(wav_file, dtype='float32')
     sig_left = sig[:,0]
     sig_right = sig[:,1]
     return sig_left, sig_right
 
 def write_wav_file(wav_left, wav_right, path):
     sig = np.column_stack((wav_left, wav_right))
-    wav.write(path, 48000, sig)
+#    wav.write(path, 48000, sig)
+    sf.write(path, sig, 48000)
     
 def ProcessChannelSlow(channel):
-    min_level = -0.65
+    min_level = -0.35
     prev_progress = int(0);
     processed_channel = np.copy(channel)
     for x in range(processed_channel.size):
@@ -28,7 +30,7 @@ def ProcessChannelSlow(channel):
             count = 0;
             while processed_channel[x+count] < min_level:
                 count = count +1
-            if count > 8:
+            if count > 13:
                 processed_channel[x:x+count] = processed_channel[x-1]
         # Print progress
         progress = 100 * x/channel.size
@@ -39,7 +41,7 @@ def ProcessChannelSlow(channel):
     return processed_channel
 
 def ProcessChannelFast(channel):
-    min_level = -0.65
+    min_level = -0.35
     prev_progress = int(0);
     # Make a copy of channel data because original data is read only
     processed_channel = np.copy(channel)
@@ -57,8 +59,8 @@ def ProcessChannelFast(channel):
         #Check the hit_channel array for consecutive index values
         count = 0
         while (index + count + 1 < len(hit_channel[0])) and (hit_channel[0][index + count] + 1 == hit_channel[0][index + count + 1]):
-            count = count +1
-        if count > 10:
+            count = count + 1
+        if count > 13:
             processed_channel[x:x+count+1] = processed_channel[x-1];
             skip_index = index + count
         
